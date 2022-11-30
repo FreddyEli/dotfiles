@@ -1,0 +1,25 @@
+#!/bin/bash
+for i in $(seq 10); do
+    if xsetwacom list devices | grep -q 256; then
+        break
+    fi
+    sleep 1
+done
+
+list=$(xsetwacom list devices)
+pad=$(echo "${list}" | awk '/Pad/{print $7}')
+stylus=$(echo "${list}" | xsetwacom list devices | awk '/stylus/{print $7}')
+
+if [ -z "${pad}" ]; then
+    exit 0
+fi
+
+xsetwacom set "HID 256c:006e Pad pad" button 1 key +space
+#xsetwacom set "HID 256c:006e Pad pad" button 1 key less
+xsetwacom set "HID 256c:006e Pad pad" button 2 key e
+xsetwacom set "HID 256c:006e Pad pad" button 3 key Ctrl Z
+xsetwacom set "HID 256c:006e Pad pad" button 8 key v
+xsetwacom set "HID 256c:006e Pad pad" button 9 key Shift F
+xsetwacom set "HID 256c:006e Pad pad" button 10 key Ctrl B
+#xsetwacom set "HID 256c:006e Pen stylus" PressureCurve 0 0 60 100
+xsetwacom set "HID 256c:006e stylus" PressureCurve 0 0 60 100

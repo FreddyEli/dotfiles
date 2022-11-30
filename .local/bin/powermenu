@@ -1,0 +1,8 @@
+#!/bin/zsh
+can=$(echo "poweroff\nreboot\nquit dwm\nsuspend"|dmenu -i -p "quit?")
+case "$can" in 
+	poweroff) poweroff;;
+	reboot) reboot;;
+	"quit dwm")  st -e pipes.sh;;
+	suspend)  st -e pipes.sh;;
+esac
