@@ -1,0 +1,11 @@
+set term pngcairo size 1280, 960 font "Arial,20"
+set output '<++>.png'
+set title '<++>'
+set xlabel '<++>'
+set ylabel '<++>'
+#set xrange [:]
+#set yrange [:]
+#set key outside
+#set key right
+p '<++>' u (1):(2)  w l t '<++>' , \
+# '<++>' u (1:(3) w l lc "gray30" notitle, \

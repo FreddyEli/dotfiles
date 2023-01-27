@@ -1,0 +1,8 @@
+#set term x11 persist (ahora le quita el fondo)
+set title '<++>'
+set xlabel '<++>'
+set ylabel '<++>'
+#set xrange [:]
+#set yrange [:]
+p '<++>' u (<++>):(<++>)   t '<++>', \
+# '<++>' u (<++>):(<++>)   t '<++>', \
