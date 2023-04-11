@@ -8,24 +8,26 @@ vim.api.nvim_create_autocmd('BufWritePost', {
 vim.cmd [[packadd packer.nvim]]
 return require('packer').startup(function(use)
 
+use 'wbthomason/packer.nvim'
+use 'norcalli/nvim-colorizer.lua'
   -- use { 'AlphaTechnolog/pywal.nvim', as = 'pywal' }
   -- use ('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
-  use 'wbthomason/packer.nvim'
- use({
-            {
-                'nvim-treesitter/nvim-treesitter',
-                event = 'CursorHold',
-                run = ':TSUpdate',
-                config = function()
-                require('estatuadetamal.plugins.treesitter')
-                end,
-            },
-            { 'nvim-treesitter/playground', after = 'nvim-treesitter' },
-            { 'nvim-treesitter/nvim-treesitter-textobjects', after = 'nvim-treesitter' },
-            { 'nvim-treesitter/nvim-treesitter-refactor', after = 'nvim-treesitter' },
-            { 'windwp/nvim-ts-autotag', after = 'nvim-treesitter' },
-            { 'JoosepAlviste/nvim-ts-context-commentstring', after = 'nvim-treesitter' },
-        })
+
+use {
+  'nvim-lualine/lualine.nvim',
+        config = function()
+            require('estatuadetamal.plugins.lualine')
+        end,
+  requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+}
+
+use {
+    'lervag/vimtex',
+        config = function()
+            require('estatuadetamal.plugins.vimtex')
+        end,
+}
+
 
  use {
   'VonHeikemen/lsp-zero.nvim',
@@ -54,3 +56,19 @@ return require('packer').startup(function(use)
   }
 }
 end)
+
+-- use({
+--            {
+--                'nvim-treesitter/nvim-treesitter',
+--                event = 'CursorHold',
+--                run = ':TSUpdate',
+--                config = function()
+--                require('estatuadetamal.plugins.treesitter')
+--                end,
+--            },
+----            { 'nvim-treesitter/playground', after = 'nvim-treesitter' },
+----            { 'nvim-treesitter/nvim-treesitter-textobjects', after = 'nvim-treesitter' },
+----            { 'nvim-treesitter/nvim-treesitter-refactor', after = 'nvim-treesitter' },
+----            { 'windwp/nvim-ts-autotag', after = 'nvim-treesitter' },
+----            { 'JoosepAlviste/nvim-ts-context-commentstring', after = 'nvim-treesitter' },
+--        })
