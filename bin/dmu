@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# A dmenu prompt to unmount drives.
+# Provides you with mounted partitions, select one to unmount.
+# Drives mounted at /, /boot and /home will not be options to unmount.
+
+unmountusb() {
+	[ -z "$drives" ] && exit
+	chosen="$(echo "$drives" | sed  "s:/r.*::g" | dmenu -i -p "Unmount which drive?"| awk '{print $1}' )"|| exit 1
+	choseno="$(echo "$drives" |grep $chosen | awk '{print $1}')"
+	[ -z "$choseno" ] && exit
+	udisksctl unmount -b "$chosen" && sleep 1 && udisksctl power-off -b "$chosen"
+	notify-send "💻 USB unmounting" "$chosen unmounted."
+	}
+
+unmountandroid() { \
+	chosen="$(awk '/simple-mtpfs/ {print $2}' /etc/mtab | dmenu -i -p "Unmount which device?")" || exit 1
+	[ -z "$chosen" ] && exit
+	sudo -A umount -l "$chosen" && notify-send "🤖 Android unmounting" "$chosen unmounted."
+	}
+
+asktype() { \
+	choice="$(printf "USB\\nAndroid" | dmenu -i -p "Unmount a USB drive or Android device?")" || exit 1
+	case "$choice" in
+		USB) unmountusb ;;
+		Android) unmountandroid ;;
+	esac
+	}
+
+	drives=$(lsblk -nrpo "name,label,UUID,size,mountpoint" |grep -v "loop\|nvme0n1\|sda "| grep "[0-9]G"| grep -v "[0-9]G $") 
+
+if ! grep simple-mtpfs /etc/mtab; then
+	[ -z "$drives" ] && echo "No drives to unmount." &&  exit
+	echo "Unmountable USB drive detected."
+	unmountusb
+else
+	if [ -z "$drives" ]
+	then
+		echo "Unmountable Android device detected."
+	       	unmountandroid
+	else
+		echo "Unmountable USB drive(s) and Android device(s) detected."
+		asktype
+	fi
+fi

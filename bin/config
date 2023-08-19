@@ -1,0 +1,14 @@
+#!/bin/zsh
+#echo "" |dmenu -p "Youtube :"
+#SEARC=$(dmenu -p "Youtube: ")
+#CHOICE=$(echo "dwm\nst\ndmenu\nzsh"|dmenu -p "Config")
+con=$(echo "dwm\nqmk\nzsh\nst\ndmenuh\npdwm\npst"|dmenu -i -p "Choose a conifg file:")
+#echo "dwm\nst\ndmenu"|dmenu
+case "$con" in 
+	zsh) cd ~ && kitty nvim .zshrc;;
+	dwm) cd ~/gitstuff/dwm-flexipatch/ && kitty nvim config.h ;;
+	qmk) cd ~/gitstuff/qmk_firmware/keyboards/ferris/keymaps/default && kitty nvim keymap.c ;;
+	st)  cd ~/gitstuff/st-flexipatch/ && kitty nvim config.h;;
+	pdwm)cd ~/gitstuff/dwm-flexipatch/ && kitty nvim patches.h;;
+	pst) cd ~/gitstuff/st-flexipatch/  && kitty nvim patches.h;;
+esac

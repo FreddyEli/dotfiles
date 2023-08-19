@@ -1,0 +1,14 @@
+#!/bin/bash
+if ! [ -f /home/estatuadetamal/pictures/wallpapers/$1 ]; then 
+	notify-send "File doesn't exist!"
+	exit 1
+fi
+sed -i "s/0[0-9][0-9].[p,j][n,p]g/$1/g" /home/estatuadetamal/.local/share/dwm/autostart.sh
+sudo sed -i "s/0[0-9][0-9].[p,j][n,p]g/$1/g" /usr/share/sddm/themes/sugar-candy/theme.conf
+wal -i /home/estatuadetamal/pictures/wallpapers/$1  --backend $2
+#sleep 1
+#sed -i "s/const //g;12,18d" /home/estatuadetamal/.cache/wal/colors-wal-dwm.h
+cd /home/estatuadetamal/gitstuff/st-flexipatch && sudo make clean install
+cd /home/estatuadetamal/gitstuff/dwm-flexipatch && sudo make clean install
+cd /home/estatuadetamal/gitstuff/dmenu-flexipatch && sudo make clean install
+##take from colors-wal-dwm: normbf = dunst_ background; sel_bg =dunst_highlight; sel_fg = dunst_foreground

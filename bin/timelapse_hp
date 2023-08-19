@@ -1,0 +1,58 @@
+#!/bin/sh
+#Give three files 
+## 1 video of timelapse
+if [ ! -f $1 ] ; then echo "File 1 doesn't exist" && exit ; fi
+## 2 final image
+if [ ! -f $2 ] ; then echo "File 2 doesn't exist" && exit ; fi
+## 3 original image
+if [ ! -f $3 ] ; then echo "File 3 doesn't exist" && exit ; fi
+dir='./tl/'
+if [ ! -d "$dir" ]; then mkdir $dir ; fi
+
+#ffmpeg -y -i $1 -ss 00:05.10 -to 00:47.50 ${dir}${1%.*}_trimmed.mp4
+
+ffmpeg -y -i ${dir}${1%.*}_trimmed.mp4 -filter "setpts=0.5*PTS,crop=1750:738:84:314" ${dir}timelapse.mp4
+res="1750x738"
+
+if [[ $(identify $2 |awk '{print $3}') != $res ]]; then
+#convert $2 -resize $res  ${dir}${2%.*}_resized.png
+convert $2 -resize $res ${dir}og.png
+convert -size $res canvas:"black" -gravity center ${dir}og.png -composite ${dir}${2%.*}_resized.png
+
+else 
+	mv $2 ${dir}${2%.*}_resized.png
+fi
+
+if [[ $(identify $2 |awk '{print $3}') != $res ]]; then
+convert $3 -resize $res ${dir}${3%.*}_resized.png
+else 
+	mv $3 ${dir}${3%.*}_resized.png
+fi
+
+##Merge
+ffmpeg -y -r 30 -i ${dir}timelapse.mp4  -r 30 -i ${dir}${2%.*}_resized.png -r 30 -filter_complex vstack ${dir}${1%.*}_timelapse.mp4
+##last frame 
+ffmpeg -y -sseof -1 -i ${dir}${1%.*}_timelapse.mp4 -update 1 -q:v 1 ${dir}last.png 
+dres=$(identify ${dir}last.png| awk '{print $3}') 
+
+convert -size $dres canvas:"black" -gravity center ${dir}${3%.*}_resized.png -composite ${dir}outro.png || echo "Error making final image" 
+#
+if [ ! -f  ${dir}outro.png ] ; then echo "Final image doesn't exist" && exit ; fi
+
+ffmpeg -y -loop 1 -t 3 -i ${dir}last.png -loop 1 -t 5 -i ${dir}outro.png  -r 30 -filter_complex "[0][1]xfade=transition=fadeblack:duration=1:offset=2" ${dir}outro.mp4 || echo "Erros making outro && exit"
+##ffmpeg -y -loop 1 -t 5 -i last.png -loop 1 -t 5 -i a.png -filter_complex "[0][1]xfade=transition=fade:duration=1:offset=4" output.mp4
+
+touch ${dir}list
+echo "file '${1%.*}_timelapse.mp4'" > ${dir}list
+echo "file 'outro.mp4'" >> ${dir}list
+    
+ffmpeg -y -f concat -safe 0 -i ${dir}list -c copy -c:v libx264 -pix_fmt yuv420p timelapse.mp4 || echo "Erros in final step" 
+#talos@timelapses>  ffmpeg -i b_timelapse.mp4 -vf tpad=stop_mode=clone:stop_duration=3 b_atimelapse.mp4
+
+##We need a video, an original image and a final image(?)
+##First trim the video
+##ffmpeg -y -i $1 -ss 00:06.5 -to 01:55.5 ${1%.*}_trimmed.mp4
+##Then crop the video
+##ffmpeg -y -i $1 -filter crop=750:750:580:310 ${1%.*}_cropped.mp4
+##Speed up
+##ffmpeg -y -i $1 -filter "setpts=0.5*PTS" ${1%.*}_speed.mp4

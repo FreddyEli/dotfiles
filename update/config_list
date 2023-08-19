@@ -1,0 +1,6 @@
+nvim .*
+lf ^lfrc$
+qutebrowser .*config.*[^1].$
+zathura .*
+cmus autosave
+ctpv .*

@@ -1,0 +1,26 @@
+#!/bin/bash
+for i in $(seq 10); do
+    if xsetwacom list devices | grep -q 256; then
+        break
+    fi
+    sleep 1
+done
+
+list=$(xsetwacom list devices)
+pad=$(echo "${list}" | grep Pad| cut -f1|xargs)
+stylus=$(echo "${list}" | grep STYLUS| cut -f1|xargs)
+
+if [ -z "${pad}" ]; then
+    exit 0
+fi
+
+xsetwacom set "${pad}" button 1 key +space
+xsetwacom set "${pad}" button 2 key e
+xsetwacom set "${pad}" button 3 key Ctrl Z
+xsetwacom set "${pad}" button 8 key v
+xsetwacom set "${pad}" button 9 key Shift F
+xsetwacom set "${pad}" button 10 key Ctrl B
+
+xsetwacom set "${pad}" button 11 key +Super_L TAB -Super_L
+xsetwacom set "${pad}" button 12 key +Super_L +Alt_L TAB -Alt_L -Super_L
+xsetwacom set "${stylus}" PressureCurve 0 0 60 100

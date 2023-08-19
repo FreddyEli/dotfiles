@@ -1,0 +1,8 @@
+#!/bin/zsh
+query=$(echo $1 | sed "s/sin/math.sin/g;s/cos/math.cos/g;s/tan/math.tan/g;s/exp/math.exp/g")
+python -c "import math;print($query)"
+while true; do
+	read query
+	query=$(echo $query | sed "s/sin/math.sin/g;s/cos/math.cos/g;s/tan/math.tan/g;s/exp/math.exp/g")
+	python -c "import math;print($query)"
+done
